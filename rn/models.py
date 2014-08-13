@@ -1,0 +1,44 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django.contrib import admin
+
+# Create your models here.
+
+class Bid(models.Model):
+	price=models.IntegerField()
+	bid_id=models.IntegerField(primary_key=True)
+
+class Timer(models.Model):
+	time=models.IntegerField()
+	t_id=models.IntegerField(primary_key=True)
+
+class User(models.Model):
+    email=models.EmailField(max_length=40,primary_key=True)
+    password=models.CharField(max_length=40)
+    hashed=models.CharField(max_length=255)
+    verified=models.IntegerField()
+    
+    
+class UserProfile(models.Model):
+
+    email=models.ForeignKey(User)
+    first_name=models.CharField(max_length=40)
+    last_name=models.CharField(max_length=40)
+    CHOICES=(('M','Male'),('F','Female'),('N','Not Specified'))
+    gender=models.CharField(max_length=1,choices=CHOICES)
+    age=models.IntegerField()
+    
+class Player(models.Model):
+    pName = models.CharField(max_length=200)
+    pCountry = models.CharField(max_length=100)
+    pAge = models.IntegerField()
+    pExpertise = models.CharField(max_length=100)
+    pMatches = models.IntegerField()
+    pBaseprice = models.DecimalField(max_digits = 20, decimal_places=2)
+    pStatus = models.CharField(max_length=20)
+    pTeam = models.CharField(max_length=20, default='DUM')
+    pAuctioned = models.DecimalField(max_digits=1, decimal_places=0, default = 0)
+    pBatAvg = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    pBallAvg = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    pCatches = models.IntegerField(default=0)
+
