@@ -1,8 +1,8 @@
 from django.contrib import admin
-from rn.models import User,Player,UserProfile,Timer,Bid
+from rn.models import UserDetails,Player,UserProfile,Timer,Bid
 # Register your models here.
 
-class UserAdmin(admin.ModelAdmin):
+class UserDetailsAdmin(admin.ModelAdmin):
     exclude=["posted"]
     
 class PlayerAdmin(admin.ModelAdmin):
@@ -17,7 +17,7 @@ class TimerAdmin(admin.ModelAdmin):
 class BidAdmin(admin.ModelAdmin):
     exclude=["posted"]
     
-admin.site.register(User,UserAdmin)
+admin.site.register(UserDetails,UserDetailsAdmin)
 admin.site.register(Player,PlayerAdmin)
 admin.site.register(UserProfile,UserProfileAdmin)
 admin.site.register(Timer,TimerAdmin)

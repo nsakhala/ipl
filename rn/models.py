@@ -12,7 +12,7 @@ class Timer(models.Model):
 	time=models.IntegerField()
 	t_id=models.IntegerField(primary_key=True)
 
-class User(models.Model):
+class UserDetails(models.Model):
     email=models.EmailField(max_length=40,primary_key=True)
     password=models.CharField(max_length=40)
     hashed=models.CharField(max_length=255)
@@ -21,7 +21,7 @@ class User(models.Model):
     
 class UserProfile(models.Model):
 
-    email=models.ForeignKey(User)
+    email=models.ForeignKey(UserDetails)
     first_name=models.CharField(max_length=40)
     last_name=models.CharField(max_length=40)
     CHOICES=(('M','Male'),('F','Female'),('N','Not Specified'))

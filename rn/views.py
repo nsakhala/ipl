@@ -17,7 +17,7 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import User,Bid,Timer
+from rn.models import UserDetails,Bid,Timer
 from datetime import datetime
 
 @never_cache    
@@ -42,7 +42,7 @@ def login_submit(request):
     email=request.POST['email']
     password=request.POST['password']
     try:
-        u=User.objects.get(email=email,password=password,verified=1)
+        u=UserDetails.objects.get(email=email,password=password,verified=1)
     except:
         return render(request,"login.html",{'message':"Incorrect Username/password..Also please make sure your account is verified."})
   
@@ -71,7 +71,7 @@ def confirm_signup(request):
     except:
         return HttpResponse("Wrong URL,dude.")
     try:
-        u=User.objects.get(hashed=request.GET['id'],verified=0)
+        u=UserDetails.objects.get(hashed=request.GET['id'],verified=0)
         
         if u:
             u.verified=1
@@ -100,7 +100,7 @@ def form_search(request):
 def submit_data(request):
     context=RequestContext(request)
     try:
-        u=User.objects.get(email=request.POST['email'])
+        u=UserDetails.objects.get(email=request.POST['email'])
     
         if u:
             return render(request,"error_signup.html",{'message':"This email address exists. Please provide a different email address."})  
@@ -122,7 +122,7 @@ def submit_data(request):
         password=request.POST['password']
         age=int(request.POST['age'])
         gender=request.POST['gender']
-        u=User(email=email,password=password,hashed=strid,verified=0)
+        u=UserDetails(email=email,password=password,hashed=strid,verified=0)
         u.save()
         u=User.objects.get(email=email)
         up=UserProfile(email=u,first_name=first_name,last_name=last_name,age=age,gender=gender)
@@ -146,7 +146,7 @@ def search_this(request):
 
     if 'q' in request.POST:
         q=request.POST['q']
-        user=User.objects.filter(name__icontains=q)
+        user=UserDetails.objects.filter(name__icontains=q)
         return render(request,'display_results.html',{'user':user,'query':q})
         
     else:

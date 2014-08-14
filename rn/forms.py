@@ -1,10 +1,10 @@
 from django import forms
-from rn.models import User,UserProfile
+from rn.models import UserDetails,UserProfile
 
 class ContactForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
     class Meta:
-        model=User
+        model=UserDetails
         
     
     
