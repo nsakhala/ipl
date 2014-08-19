@@ -181,8 +181,10 @@ function checkTime(i) {
                         hr=hr+5;
                     }
                     document.getElementById("timer").innerHTML="Last Bid at: "+hr%24+":"+mi+":"+se+" by "+message_json.actor;
+
                     if(message_json.verb%1===0)
                     {pBid=parseInt(message_json.verb);}
+                    document.getElementById("current_bid").innerHTML="Current Bid:"+pBid;
 
                     
                 }
@@ -211,8 +213,9 @@ function checkTime(i) {
             <div class="span7 homeabout">
                 <div class="person">
                     <span class="name">{{player.pName}}</span>
+                    <div id="current_bid">Current Bid:{{player.pBaseprice}}</div>
                     <div id="timer"></div>
-                    <div id="txt">Current Bid:{{player.pBaseprice}}</div>
+                    <div id="txt"></div>
                     <div class="font16">
                         {{player.pCountry}} 
                         <!-- <span class="greentext"><a href="#">EGrappler.com</a></span> -->

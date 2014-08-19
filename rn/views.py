@@ -274,20 +274,23 @@ def send_notification(request):
 @login_required
 def ajax_send_notification(request):
     
-    
+    pid=int(request.POST['pId'])
+    pob=Player.objects.get(pk=pid)
+    if pob.pBid==0:
+        pob.pBid=pob.pBaseprice+1000000
+    else:
+        pob.pBid=pob.pBid+1000000
 
-    ob=Bid.objects.get(bid_id=1)
-    ob.price+=1000000
-    ob.save()
+    pob.save()
     recipients = User.objects.all()
-    p=ob.price
+    
     
 
     for recipient in recipients:
         notify.send(
             request.user,
             recipient=recipient,
-            verb=ob.price
+            verb=pob.pBid
             
             
 
