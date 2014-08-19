@@ -27,6 +27,12 @@ class UserProfile(models.Model):
     CHOICES=(('M','Male'),('F','Female'),('N','Not Specified'))
     gender=models.CharField(max_length=1,choices=CHOICES)
     age=models.IntegerField()
+
+class pBidModel(models.Model):
+	pId=models.IntegerField(primary_key=True)
+	pBid=models.IntegerField(default=0)
+	pOwner=models.CharField(max_length=100)
+
     
 class Player(models.Model):
     pName = models.CharField(max_length=200)
@@ -41,4 +47,8 @@ class Player(models.Model):
     pBatAvg = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     pBallAvg = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     pCatches = models.IntegerField(default=0)
+
+class activePlayer(models.Model):
+	aId=models.IntegerField(primary_key=True)
+
 

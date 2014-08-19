@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^timer_update',views.timer_update,name='timer_update'),
     url(r'^treset',views.treset,name='treset'),
     url(r'^$',views.home),
+    url(r'^update_player/$',views.update_player,name='update_player'),
     (r'^form_search',views.form_search),
     (r'^search_this',views.search_this),
     (r'^submit_data',views.submit_data),
@@ -37,7 +38,9 @@ urlpatterns = patterns('',
     (r'^logout',views.logout),
     (r'^timer/',views.timer),
     (r'^auc_screen',views.auc_screen),
+
     (r'^detail/(?P<player_id>\d+)/$', views.detail),
+    
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
                  {'document_root': settings.MEDIA_ROOT}),
     )

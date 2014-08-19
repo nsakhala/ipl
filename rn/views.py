@@ -2,6 +2,7 @@ import json
 import redis
 import hashlib
 import time
+import json as simplejson
 
 from notifications import notify
 from django.http import HttpResponse
@@ -17,9 +18,11 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer
+from rn.models import UserDetails,Bid,Timer,pBidModel,activePlayer
 from datetime import datetime
 
+
+active_player=1
 @never_cache    
 def profile(request):
     if 'session_name' not in request.session:
@@ -124,13 +127,16 @@ def submit_data(request):
         gender=request.POST['gender']
         u=UserDetails(email=email,password=password,hashed=strid,verified=0)
         u.save()
-        u=User.objects.get(email=email)
+        u=UserDetails.objects.get(email=email)
         up=UserProfile(email=u,first_name=first_name,last_name=last_name,age=age,gender=gender)
         up.save()
         return render(request,"success.html")
             
     else:
         return HttpResponse("The form is invalid")
+
+
+
 
 @never_cache   
 def login_check(request):
@@ -161,9 +167,51 @@ def auc_screen(request):
     return render_to_response('auc_screen.html', context_dict, context)
 
 def detail(request, player_id):
+    notifications = request.user.notifications.unread().order_by('-timestamp')
+    
     player = Player.objects.get(pk=player_id)
-    return render(request, 'detail.html', {'player':player})
+    
+    return render(request, 'detail.html', {'player':player,'notifications':notifications})
 
+
+def update_player(request):
+    notifications = request.user.notifications.unread().order_by('-timestamp')
+    recipients = User.objects.all()
+    pid=request.GET['pId']
+    pBid=request.GET['pBid']
+    active_player=int(pid)+1
+
+    ob=pBidModel.objects.get(pId=pid)
+    pob=Player.objects.get(pk=pid)
+    if pob.pBaseprice==pBid:
+        ob.pOwner=0
+        ob.pBid=0
+
+    else:
+
+        for notification in notifications:
+
+            ob.pOwner=notification.actor
+            ob.pBid=pBid
+        
+            break
+        ob.save()
+    
+
+    for recipient in recipients:
+        notify.send(
+            request.user,
+            recipient=recipient,
+            verb="Player Sold."
+
+    
+            
+            
+
+        )
+
+    return HttpResponse(json.dumps({"success": True}), content_type="application/json")
+    
 
 @login_required
 def home_realtime(request):
@@ -220,12 +268,14 @@ def send_notification(request):
 @login_required
 def ajax_send_notification(request):
     
+    
 
     ob=Bid.objects.get(bid_id=1)
     ob.price+=1000000
     ob.save()
     recipients = User.objects.all()
     p=ob.price
+    
 
     for recipient in recipients:
         notify.send(

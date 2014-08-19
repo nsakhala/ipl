@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     
-    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="screen, projection"/>
             
     <title>Cricket League Auction</title>
     <link href="{% static 'css/demo.css' %}" rel="stylesheet" type="text/css">
@@ -17,6 +17,178 @@
     <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel='stylesheet'>
     <link href="{% static 'css/simpletextrotator.css' %}" rel="stylesheet" type="text/css">
+    <script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
+    <script src="{% static 'js/validate.js' %}"></script>
+    <script src="http://localhost:8002/socket.io/socket.io.js"></script>
+
+
+
+    <script>
+    var pBid={{player.pBaseprice}};
+    var notif_time;
+    var hr,mi,se;
+    {% for notification in notifications|slice:":1" %}
+    notif_time="{{ notification.timestamp|date:"c" }}";
+    
+    {%endfor%}
+
+    var notif_time=notif_time.substring(11,19);
+    var notif_hr=parseInt(notif_time.substring(0,2));
+    var notif_min=parseInt(notif_time.substring(3,5));
+    var notif_sec=parseInt(notif_time.substring(6,8));
+
+
+
+    if(notif_min>30)
+    {
+        notif_min=notif_min-30;
+        notif_hr+=6;
+    }
+
+    else{
+        notif_min+=30;
+        notif_hr+=5;
+    }
+
+
+
+    se=notif_sec;
+
+
+
+    function startTime() {
+    var ps;
+    var today=new Date();
+    var h=parseInt(today.getHours());
+    var m=parseInt(today.getMinutes());
+    var s=parseInt(today.getSeconds());
+    if(s<se)
+        {s+=60;
+        ps=s-se;}
+    else{
+        ps=s-se;
+    }
+    document.getElementById('txt').innerHTML =30-ps+" "+notif_hr%24+":"+notif_min+":"+notif_sec;
+    if(ps>=30)
+    {
+        var pid=parseInt({{player.id}})+1;
+    var pid_send=parseInt({{player.id}});
+    $.get('/update_player?pId='+pid_send+'&pBid='+pBid,function(){
+        window.location.href="/detail/"+pid;
+    });
+
+                
+        
+        
+    }
+    
+    else
+    {
+
+    }
+    setTimeout("startTime()",500);
+}
+
+function checkTime(i) {
+    if (i<10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
+        function getCookie(name) {
+            var cookieValue = null;
+
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+
+            return cookieValue;
+        }
+
+        $(document).ready(function() {
+            $("#mark-as-read-button").on("click", function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: "{% url 'ajax_mark_as_read' %}",
+                    type: "POST",
+                    success: function(data) {
+                    },
+                    beforeSend: function(xhr){
+                        var csrftoken = getCookie("csrftoken");
+                        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+                    }
+                });
+            });
+
+            
+
+            $("body").on("click", "button.send-notification-form-submit", function(event) {
+                event.preventDefault();
+
+
+                var $send_notification_form = $(event.target).parent();
+
+                $.ajax({
+                    url: "{% url 'ajax_send_notification' %}",
+                    type: "POST",
+                    data: {'pId':{{player.id}}},
+                    success: function(data) {
+                       
+                    },
+                    beforeSend: function(xhr){
+                        var csrftoken = getCookie("csrftoken");
+                        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+                    }
+                
+                });
+            });
+
+            var socket = io.connect("localhost", {port: 8002});
+
+            socket.on('message', function(message) {
+                var message_json = jQuery.parseJSON(message);
+
+                $("#unread_count").text(message_json.unread_count);
+
+                if ("mark_as_read" in message_json) {
+                    $("#notifications-table tbody").empty();
+                } else {
+                    var $tr = $("<tr>");
+                    $tr.append($("<td>").text(message_json.timestamp));
+                    $tr.append($("<td>").text(message_json.recipient));
+                    $tr.append($("<td>").text(message_json.actor));
+                    $tr.append($("<td>").text(message_json.verb));
+                    
+                    
+
+                    $("#notifications-table tbody").prepend($tr);
+                    var ts=message_json.timestamp;
+                    var t=ts.substring(11,19);
+                    hr=parseInt(t.substring(0,2));
+                    mi=parseInt(t.substring(3,5));
+                    se=parseInt(t.substring(6,8));
+                    if(mi+30>60)
+                        {hr+=6;
+                            mi=mi-30;} 
+                    else{
+                        mi=mi+30;
+                        hr=hr+5;
+                    }
+                    document.getElementById("timer").innerHTML="Last Bid at: "+hr%24+":"+mi+":"+se+" by "+message_json.actor;
+                    if(message_json.verb%1===0)
+                    {pBid=parseInt(message_json.verb);}
+
+                    
+                }
+            });
+        });
+    </script>
     
     <!--[if lt IE 9]> 
             <style>
@@ -25,7 +197,8 @@
             </style>
     <![endif]-->
 </head>
-<body >
+<body onload="startTime()">
+{% csrf_token %}
     <div class="container topbottom">
         <div class="row-fluid">
 
@@ -38,6 +211,8 @@
             <div class="span7 homeabout">
                 <div class="person">
                     <span class="name">{{player.pName}}</span>
+                    <div id="timer"></div>
+                    <div id="txt">Current Bid:{{player.pBaseprice}}</div>
                     <div class="font16">
                         {{player.pCountry}} 
                         <!-- <span class="greentext"><a href="#">EGrappler.com</a></span> -->
@@ -100,7 +275,7 @@
                     </div>
                     <div class="span6">
                         <button id="soldButton" a href="#" class="btn btn-default btn-success btn-lg btn-block"><strong> Sold </strong></a>
-                        <button id="raiseButton" a href="#" class="btn btn-default btn-success btn-lg btn-block"><span class="icon-white icon-arrow-up"></span><strong> Raise by 10L </strong></a>
+                        <button id="raiseButton" a href="#" class="btn btn-default btn-success btn-lg btn-block send-notification-form-submit"><span class="icon-white icon-arrow-up"></span><strong> Raise by 10L </strong></a>
                     </div>
                 </div>          
                 
