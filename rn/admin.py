@@ -1,28 +1,31 @@
 from django.contrib import admin
-from rn.models import UserDetails,Player,UserProfile,Timer,Bid,activePlayer
+from rn.models import UserDetails,Player,UserProfile,Timer,Bid,activePlayer, Bidder
 # Register your models here.
 
 class UserDetailsAdmin(admin.ModelAdmin):
-    exclude=["posted"]
+    exclude=[]
 
 # class pBidModelAdmin(admin.ModelAdmin):
 # 	exclude=["posted"]
     
 class PlayerAdmin(admin.ModelAdmin):
-    exclude=["posted"]
+    exclude=[]
     
 class UserProfileAdmin(admin.ModelAdmin):
-    exclue=["posted"]
+    exclue=[]
     
 class TimerAdmin(admin.ModelAdmin):
-    exclude=["posted"]
+    exclude=[]
 
 class BidAdmin(admin.ModelAdmin):
-    exclude=["posted"]
+    exclude=[]
 
 class activePlayerAdmin(admin.ModelAdmin):
-	exclude=["posted"]
-    
+	exclude=[]
+
+class BidderAdmin(admin.ModelAdmin):
+    exclude = []
+
 admin.site.register(UserDetails,UserDetailsAdmin)
 admin.site.register(Player,PlayerAdmin)
 admin.site.register(UserProfile,UserProfileAdmin)
@@ -30,3 +33,4 @@ admin.site.register(Timer,TimerAdmin)
 admin.site.register(Bid,BidAdmin)
 # admin.site.register(pBidModel,pBidModelAdmin)
 admin.site.register(activePlayer,activePlayerAdmin)
+admin.site.register(Bidder, BidderAdmin)
