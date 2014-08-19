@@ -52,4 +52,8 @@ class Player(models.Model):
 class activePlayer(models.Model):
 	aId=models.IntegerField(primary_key=True)
 
+class Bidder(models.Model):
+    email=models.EmailField(max_length=40, primary_key=True)
+    password=models.CharField(max_length=40)
+    start = models.IntegerField()
 

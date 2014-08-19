@@ -3,6 +3,8 @@ import redis
 import hashlib
 import time
 import json as simplejson
+import random
+import string
 
 from notifications import notify
 from django.http import HttpResponse
@@ -18,11 +20,12 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,activePlayer
+from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder
 from datetime import datetime
 
 
 active_player=1
+num_bidders = 2
 @never_cache    
 def profile(request):
     if 'session_name' not in request.session:
@@ -340,3 +343,21 @@ def notification_post_save(sender, **kwargs):
                 )
             )
         )
+
+def setup(request):
+    if request.method == 'POST':
+        for i in range(num_bidders):
+            num_id = 'id'+str(i+1)
+            passwd = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+            b = Bidder.objects.create(email=request.POST[num_id], password=passwd, start=0)
+            mail_title = 'Password for auction'
+            message = 'Your password is: '+passwd+'.'
+            email = 'admin@ipl.com'
+            recipient = request.POST[num_id]
+            list_recipients = [recipient]
+            send_mail(mail_title, message, email, list_recipients)
+        return render(request, "profile.html") 
+
+    else:
+        return render(request, "setup.html")
+
