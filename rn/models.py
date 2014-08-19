@@ -28,10 +28,10 @@ class UserProfile(models.Model):
     gender=models.CharField(max_length=1,choices=CHOICES)
     age=models.IntegerField()
 
-class pBidModel(models.Model):
-	pId=models.IntegerField(primary_key=True)
-	pBid=models.IntegerField(default=0)
-	pOwner=models.CharField(max_length=100)
+# class pBidModel(models.Model):
+# 	pId=models.IntegerField(primary_key=True)
+# 	pBid=models.IntegerField(default=0)
+# 	pOwner=models.CharField(max_length=100)
 
     
 class Player(models.Model):
@@ -43,6 +43,7 @@ class Player(models.Model):
     pBaseprice = models.DecimalField(max_digits = 20, decimal_places=2)
     pStatus = models.CharField(max_length=20)
     pTeam = models.CharField(max_length=20, default='DUM')
+    pBid = models.DecimalField(max_digits = 20, decimal_places=2, default = 0)
     pAuctioned = models.DecimalField(max_digits=1, decimal_places=0, default = 0)
     pBatAvg = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     pBallAvg = models.DecimalField(max_digits=6, decimal_places=2, default=0)

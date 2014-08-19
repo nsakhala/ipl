@@ -18,7 +18,7 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,pBidModel,activePlayer
+from rn.models import UserDetails,Bid,Timer,activePlayer
 from datetime import datetime
 
 
@@ -177,25 +177,31 @@ def detail(request, player_id):
 def update_player(request):
     notifications = request.user.notifications.unread().order_by('-timestamp')
     recipients = User.objects.all()
-    pid=request.GET['pId']
-    pBid=request.GET['pBid']
-    active_player=int(pid)+1
+    pid=int(request.GET['pId'])
+    pBid=int(request.GET['pBid'])
+    
 
-    ob=pBidModel.objects.get(pId=pid)
+    # ob=pBidModel.objects.get(pId=pid)
     pob=Player.objects.get(pk=pid)
-    if pob.pBaseprice==pBid:
-        ob.pOwner=0
-        ob.pBid=0
+    if pob.pAuctioned==1:
+        pass
 
     else:
 
-        for notification in notifications:
 
-            ob.pOwner=notification.actor
-            ob.pBid=pBid
-        
-            break
-        ob.save()
+        if pob.pBaseprice==pBid:
+            pass
+
+        else:
+
+            for notification in notifications:
+
+                pob.pTeam=notification.actor
+                pob.pBid=pBid
+                pob.pStatus='Sold'
+                break
+        pob.pAuctioned=1
+        pob.save()
     
 
     for recipient in recipients:
