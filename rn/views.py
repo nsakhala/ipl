@@ -177,24 +177,30 @@ def detail(request, player_id):
 def update_player(request):
     notifications = request.user.notifications.unread().order_by('-timestamp')
     recipients = User.objects.all()
-    pid=request.GET['pId']
-    pBid=request.GET['pBid']
-    active_player=int(pid)+1
+    pid=int(request.GET['pId'])
+    pBid=int(request.GET['pBid'])
+    
 
     # ob=pBidModel.objects.get(pId=pid)
     pob=Player.objects.get(pk=pid)
-    if pob.pBaseprice==pBid:
-        pob.pTeam=0
-        pob.pBid=0
+    if pob.pAuctioned==1:
+        pass
 
     else:
 
-        for notification in notifications:
 
-            pob.pTeam=notification.actor
-            pob.pBid=pBid
-        
-            break
+        if pob.pBaseprice==pBid:
+            pass
+
+        else:
+
+            for notification in notifications:
+
+                pob.pTeam=notification.actor
+                pob.pBid=pBid
+                pob.pStatus='Sold'
+                break
+        pob.pAuctioned=1
         pob.save()
     
 
