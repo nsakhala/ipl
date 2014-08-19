@@ -18,7 +18,7 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,pBidModel,activePlayer
+from rn.models import UserDetails,Bid,Timer,activePlayer
 from datetime import datetime
 
 
@@ -181,21 +181,21 @@ def update_player(request):
     pBid=request.GET['pBid']
     active_player=int(pid)+1
 
-    ob=pBidModel.objects.get(pId=pid)
+    # ob=pBidModel.objects.get(pId=pid)
     pob=Player.objects.get(pk=pid)
     if pob.pBaseprice==pBid:
-        ob.pOwner=0
-        ob.pBid=0
+        pob.pTeam=0
+        pob.pBid=0
 
     else:
 
         for notification in notifications:
 
-            ob.pOwner=notification.actor
-            ob.pBid=pBid
+            pob.pTeam=notification.actor
+            pob.pBid=pBid
         
             break
-        ob.save()
+        pob.save()
     
 
     for recipient in recipients:
