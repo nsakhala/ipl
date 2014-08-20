@@ -64,6 +64,11 @@
 
 
     function startTime() {
+        var stats = "{{player.pStatus}}";
+        if(stats=="Sold"){
+            var rid = parseInt({{player.id}}+1);
+            window.location.href="/detail/"+rid;
+        }
     var ps;
     var today=new Date();
     var h=parseInt(today.getHours());
@@ -80,16 +85,22 @@
     {
         
     var pid_send=parseInt({{player.id}});
-    
 
+    if(pid<=518)
+    {
     $.ajax({
                     url: "{% url 'update_player' %}",
                     type: "POST",
                     data:{'pId':pid_send,'pBid':pBid},
                     success: function(data) {
                         post_success=1;
+                        if(pid<518){
                         window.location.href="/detail/"+pid;
-                        
+                        }
+                        else{
+                            var lid = 1;
+                            window.location.href="/detail/"+lid;
+                        }
                     },
                     
                     beforeSend: function(xhr){
@@ -97,6 +108,7 @@
                         xhr.setRequestHeader('X-CSRFToken', csrftoken);
                     }
                 });
+}
 
     
     
