@@ -24,7 +24,11 @@
 
 
     <script>
-    var pBid={{player.pBaseprice}};
+    var post_success=0;
+    var pid=parseInt({{player.id}});
+    pid+=1;
+
+    var pBid=parseInt({{player.pBaseprice}});
     var notif_time;
     var hr,mi,se;
     {% for notification in notifications|slice:":1" %}
@@ -68,25 +72,43 @@
     else{
         ps=s-se;
     }
-    document.getElementById('txt').innerHTML =30-ps+" "+notif_hr%24+":"+notif_min+":"+notif_sec;
+    document.getElementById('txt').innerHTML ="Time left:"+(30-ps)+" seconds";
     if(ps>=30)
     {
-        var pid=parseInt({{player.id}})+1;
+        
     var pid_send=parseInt({{player.id}});
-    $.get('/update_player?pId='+pid_send+'&pBid='+pBid,function(){
-        window.location.href="/detail/"+pid;
-    });
+    
+
+    $.ajax({
+                    url: "{% url 'update_player' %}",
+                    type: "POST",
+                    data:{'pId':pid_send,'pBid':pBid},
+                    success: function(data) {
+                        post_success=1;
+                        window.location.href="/detail/"+pid;
+                        
+                    },
+                    
+                    beforeSend: function(xhr){
+                        var csrftoken = getCookie("csrftoken");
+                        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+                    }
+                });
+
+    
+    
+    }
 
                 
         
         
-    }
+    
     
     else
-    {
+    {setTimeout("startTime()",500);
 
     }
-    setTimeout("startTime()",500);
+    
 }
 
 function checkTime(i) {
@@ -180,9 +202,14 @@ function checkTime(i) {
                         mi=mi+30;
                         hr=hr+5;
                     }
+                    if(message_json.verb=="Player Sold." && message_json.actor!="{{request.user}}")
+                    {window.location.href="/detail/"+pid;}
                     document.getElementById("timer").innerHTML="Last Bid at: "+hr%24+":"+mi+":"+se+" by "+message_json.actor;
+
+
                     if(message_json.verb%1===0)
                     {pBid=parseInt(message_json.verb);}
+                    document.getElementById("current_bid").innerHTML="Current Bid:"+pBid;
 
                     
                 }
@@ -211,8 +238,9 @@ function checkTime(i) {
             <div class="span7 homeabout">
                 <div class="person">
                     <span class="name">{{player.pName}}</span>
+                    <div id="current_bid">Current Bid:{{player.pBaseprice}}</div>
                     <div id="timer"></div>
-                    <div id="txt">Current Bid:{{player.pBaseprice}}</div>
+                    <div id="txt"></div>
                     <div class="font16">
                         {{player.pCountry}} 
                         <!-- <span class="greentext"><a href="#">EGrappler.com</a></span> -->

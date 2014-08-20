@@ -40,9 +40,9 @@ urlpatterns = patterns('',
     (r'^auc_screen',views.auc_screen),
     (r'^setup', views.setup),
     (r'^select_team', views.select_team),
-
+    (r'^bidder_signup', views.bidder_signup),
+    (r'^select_teams', views.select_team),
     (r'^detail/(?P<player_id>\d+)/$', views.detail),
-    
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
                  {'document_root': settings.MEDIA_ROOT}),
     )
