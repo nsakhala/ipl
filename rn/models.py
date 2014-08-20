@@ -57,3 +57,11 @@ class Bidder(models.Model):
     password=models.CharField(max_length=40)
     start = models.IntegerField()
 
+
+class UserPurse(models.Model):
+	money=models.IntegerField(default=600000000)
+	user_data=models.ForeignKey(User)
+	
+	
+
+
