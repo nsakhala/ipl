@@ -21,6 +21,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
 from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder, Team
+from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse
 from datetime import datetime
 
 
@@ -171,10 +172,12 @@ def auc_screen(request):
 
 def detail(request, player_id):
     notifications = request.user.notifications.unread().order_by('-timestamp')
-    
+    uob=User.objects.get(username=request.user)
+    ob=UserPurse.objects.get(user_data=uob)
+
     player = Player.objects.get(pk=player_id)
     
-    return render(request, 'detail.html', {'player':player,'notifications':notifications})
+    return render(request, 'detail.html', {'player':player,'notifications':notifications,'money':ob.money})
 
 
 def update_player(request):
@@ -182,6 +185,9 @@ def update_player(request):
     recipients = User.objects.all()
     pid=int(request.GET['pId'])
     pBid=int(request.GET['pBid'])
+    pid=int(request.POST['pId'])
+    pBid=int(request.POST['pBid'])
+
     
 
     # ob=pBidModel.objects.get(pId=pid)
@@ -198,7 +204,11 @@ def update_player(request):
         else:
 
             for notification in notifications:
-
+                p=notification.actor.pk
+                uob=User.objects.get(pk=p)
+                ob=UserPurse.objects.get(user_data=uob)
+                ob.money=ob.money-pBid
+                ob.save()
                 pob.pTeam=notification.actor
                 pob.pBid=pBid
                 pob.pStatus='Sold'

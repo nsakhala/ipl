@@ -60,3 +60,11 @@ class Bidder(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=40, primary_key = True)
     owner = models.CharField(max_length=40)
+
+class UserPurse(models.Model):
+	money=models.IntegerField(default=600000000)
+	user_data=models.ForeignKey(User)
+	
+	
+
+

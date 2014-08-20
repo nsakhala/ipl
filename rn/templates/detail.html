@@ -8,7 +8,7 @@
     
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="screen, projection"/>
             
-    <title>Cricket League Auction</title>
+    <title>Welcome {{request.user}}</title>
     <link href="{% static 'css/demo.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/jqbar.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css">
@@ -24,6 +24,9 @@
 
 
     <script>
+    var local_bid=0;
+    var purse={{money}};
+    
     var post_success=0;
     var pid=parseInt({{player.id}});
     pid+=1;
@@ -203,16 +206,30 @@ function checkTime(i) {
                         hr=hr+5;
                     }
                     if(message_json.verb=="Player Sold." && message_json.actor!="{{request.user}}")
-                    {window.location.href="/detail/"+pid;}
+                    {window.location.href="/detail/"+pid;
+                    }
                     document.getElementById("timer").innerHTML="Last Bid at: "+hr%24+":"+mi+":"+se+" by "+message_json.actor;
-
+                    
 
                     if(message_json.verb%1===0)
-                    {pBid=parseInt(message_json.verb);}
+                    {pBid=parseInt(message_json.verb);
+                        if(message_json.actor=="{{request.user}}")
+                        {
+                            if(local_bid==0)
+                            {
+                                purse=purse-pBid;
+                                local_bid=1;
+                            }
+                            else
+                            {
+                                purse={{money}}-pBid;
+                            }
+                        }
+                    document.getElementById("purse").innerHTML="Your purse:"+purse;}
                     document.getElementById("current_bid").innerHTML="Current Bid:"+pBid;
-
                     
-                }
+                    }
+
             });
         });
     </script>
@@ -238,9 +255,10 @@ function checkTime(i) {
             <div class="span7 homeabout">
                 <div class="person">
                     <span class="name">{{player.pName}}</span>
-                    <div id="current_bid">Current Bid:{{player.pBaseprice}}</div>
+                    <div id="current_bid">No bid yet.</div>
                     <div id="timer"></div>
                     <div id="txt"></div>
+                    <div id="purse">Your purse:{{money}}</div>
                     <div class="font16">
                         {{player.pCountry}} 
                         <!-- <span class="greentext"><a href="#">EGrappler.com</a></span> -->
