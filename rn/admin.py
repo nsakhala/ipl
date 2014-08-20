@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rn.models import UserDetails,Player,UserProfile,Timer,Bid,activePlayer, Bidder
+from rn.models import UserDetails,Player,UserProfile,Timer,Bid,activePlayer, Bidder, Team
 # Register your models here.
 
 class UserDetailsAdmin(admin.ModelAdmin):
@@ -25,6 +25,8 @@ class activePlayerAdmin(admin.ModelAdmin):
 
 class BidderAdmin(admin.ModelAdmin):
     exclude = []
+class TeamAdmin(admin.ModelAdmin):
+    exclude = []
 
 admin.site.register(UserDetails,UserDetailsAdmin)
 admin.site.register(Player,PlayerAdmin)
@@ -34,3 +36,4 @@ admin.site.register(Bid,BidAdmin)
 # admin.site.register(pBidModel,pBidModelAdmin)
 admin.site.register(activePlayer,activePlayerAdmin)
 admin.site.register(Bidder, BidderAdmin)
+admin.site.register(Team, TeamAdmin)

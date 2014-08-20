@@ -20,7 +20,7 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder
+from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder, Team
 from datetime import datetime
 
 
@@ -345,10 +345,11 @@ def setup(request):
     if request.method == 'POST':
         for i in range(num_bidders):
             num_id = 'id'+str(i+1)
+            username = 'user'+str(i)
             passwd = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-            b = Bidder.objects.create(email=request.POST[num_id], password=passwd, start=0)
-            mail_title = 'Password for auction'
-            message = 'Your password is: '+passwd+'.'
+            b = User.objects.create_user(username, request.POST[num_id], passwd)
+            mail_title = 'Username and password for auction'
+            message = 'Your username is: '+username+'.'+'\n'+'Your password is: '+passwd+'.'
             email = 'admin@ipl.com'
             recipient = request.POST[num_id]
             list_recipients = [recipient]
@@ -358,3 +359,14 @@ def setup(request):
     else:
         return render(request, "setup.html")
 
+def select_team(request):
+    if request.method == 'POST':
+        if Team.objects.get(name= request.POST["team"]):
+            return render(request, "select_team.html")
+        else:
+           Team.objects.create(name=request.POST["team"], owner = request.session["uname"])
+           return render(request, "auction_start.html")
+    else:
+        return render(request, "select_team.html")
+
+        

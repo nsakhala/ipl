@@ -39,6 +39,7 @@ urlpatterns = patterns('',
     (r'^timer/',views.timer),
     (r'^auc_screen',views.auc_screen),
     (r'^setup', views.setup),
+    (r'^select_team', views.select_team),
 
     (r'^detail/(?P<player_id>\d+)/$', views.detail),
     
