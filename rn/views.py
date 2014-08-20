@@ -20,7 +20,7 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse
+from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse,Team
 from datetime import datetime
 
 
