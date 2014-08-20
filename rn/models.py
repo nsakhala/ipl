@@ -49,6 +49,10 @@ class Player(models.Model):
     pBallAvg = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     pCatches = models.IntegerField(default=0)
 
+    def __unicode__(self):
+        return self.pName
+
+
 class activePlayer(models.Model):
 	aId=models.IntegerField(primary_key=True)
 
