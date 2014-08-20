@@ -57,6 +57,9 @@ class Bidder(models.Model):
     password=models.CharField(max_length=40)
     start = models.IntegerField()
 
+class Team(models.Model):
+    name = models.CharField(max_length=40, primary_key = True)
+    owner = models.CharField(max_length=40)
 
 class UserPurse(models.Model):
 	money=models.IntegerField(default=600000000)
