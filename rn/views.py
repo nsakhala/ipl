@@ -180,14 +180,14 @@ def detail(request, player_id):
 def update_player(request):
     notifications = request.user.notifications.unread().order_by('-timestamp')
     recipients = User.objects.all()
-    pid=int(request.GET['pId'])
-    pBid=int(request.GET['pBid'])
+    pid=int(request.POST['pId'])
+    pBid=int(request.POST['pBid'])
     
 
     # ob=pBidModel.objects.get(pId=pid)
     pob=Player.objects.get(pk=pid)
     if pob.pAuctioned==1:
-        pass
+        return HttpResponse("")
 
     else:
 
@@ -207,20 +207,19 @@ def update_player(request):
         pob.save()
     
 
-    for recipient in recipients:
-        notify.send(
-            request.user,
-            recipient=recipient,
-            verb="Player Sold."
+        for recipient in recipients:
+            notify.send(
+                request.user,
+                recipient=recipient,
+                verb="Player Sold."
 
     
             
             
 
-        )
+            )
 
-    return HttpResponse(json.dumps({"success": True}), content_type="application/json")
-    
+        return HttpResponse(json.dumps({"success":True}),content_type="application/json")    
 
 @login_required
 def home_realtime(request):
