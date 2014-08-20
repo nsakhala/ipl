@@ -190,7 +190,7 @@ def update_player(request):
     # ob=pBidModel.objects.get(pId=pid)
     pob=Player.objects.get(pk=pid)
     if pob.pAuctioned==1:
-        return HttpResponse(json.dumps({"success":False}),content_type="application/json"")
+        return HttpResponse(json.dumps({"success":False}),content_type="application/json")
 
     else:
 
@@ -354,12 +354,12 @@ def setup(request):
     if request.method == 'POST':
         for i in range(num_bidders):
             num_id = 'id'+str(i+1)
-            passwd = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-            b = Bidder.objects.create(email=request.POST[num_id], password=passwd, start=0)
-            mail_title = 'Password for auction'
-            message = 'Your password is: '+passwd+'.'
-            email = 'admin@ipl.com'
             recipient = request.POST[num_id]
+            #strid=hashlib.sha224(recipient).hexdigest()
+            strid = recipient
+            mail_title = 'Signup for auction'
+            message = 'Please click on the following link to signup for the auction: \nhttp://127.0.0.1:8000/bidder_signup?id=%s '%(strid)
+            email = 'admin@ipl.com'
             list_recipients = [recipient]
             send_mail(mail_title, message, email, list_recipients)
         return render(request, "profile.html") 
@@ -367,3 +367,35 @@ def setup(request):
     else:
         return render(request, "setup.html")
 
+def bidder_signup(request):
+    if request.method == 'GET':
+        strid = request.GET['id']
+        request.session["email"] = strid
+        return render(request, "bidder_signup.html")
+
+    elif request.method == 'POST':
+        fname = request.POST["first_name"]
+        lname = request.POST["last_name"]
+        uname = request.POST["username"]
+        passwd = request.POST["password"]
+        b = User.objects.create_user(username=uname, email=request.session["email"], first_name=fname, last_name=lname, password=passwd)
+        return HttpResponseRedirect("select_teams.html")
+
+
+
+def select_team(request):
+    if request.method == 'POST':
+        try:
+            Team.objects.get(name= request.POST["team"])
+            return render(request, "select_teams.html")
+
+        except:
+            email_id = request.session["email"]
+            b = User.objects.get(email = email_id)
+            Team.objects.create(name=request.POST["team"], owner = b.last_name)
+            return render(request, "auction_start.html")
+    else:
+        return render(request, "select_teams.html")
+
+def auction_start(request):
+    return render(request, "auction_start.html")
