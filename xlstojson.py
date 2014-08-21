@@ -39,7 +39,7 @@ for rownum in range(1, sheetRead.nrows):
         
         
         tempDict['pExpertise'] = row_values[6]
-        tempDict['pStatus'] = "Sold"
+        tempDict['pStatus'] = "Unsold"
         tempDict['pTeam'] = 'DUM'
         tempDict['pBid'] = 0
         tempDict['pAuctioned'] = 0
