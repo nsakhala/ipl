@@ -273,7 +273,7 @@ function checkTime(i) {
                     <div id="timer"></div>
                     <div id="txt"></div>
                     <div id="purse">Your purse:{{money}}</div>
-                    <div id="bot"></div>
+                    <!-- <div id="bot"></div> -->
                     <div class="font16">
                         {{player.pCountry}} 
                         <!-- <span class="greentext"><a href="#">EGrappler.com</a></span> -->
@@ -408,25 +408,25 @@ function checkTime(i) {
                 
 </body>
 
-<script>
-    var base=parseInt({{player.pBaseprice}});
-    var matches=parseInt({{player.pMatches}});
-    if(matches==0)
-    {
-        matches=1;
-    }
-    var batAvg=parseInt({{player.pBatAvg}});
-    var ballAvg=parseInt({{player.pBallAvg}});
+// <script>
+//     var base=parseInt({{player.pBaseprice}});
+//     var matches=parseInt({{player.pMatches}});
+//     if(matches==0)
+//     {
+//         matches=1;
+//     }
+//     var batAvg=parseInt({{player.pBatAvg}});
+//     var ballAvg=parseInt({{player.pBallAvg}});
 
-    var w1=1-(matches/base);
-    var w2=Math.floor(batAvg+(50-ballAvg));
+//     var w1=1-(matches/base);
+//     var w2=Math.floor(batAvg+(50-ballAvg));
 
-    document.getElementById("bot").innerHTML=w1+w2;
-
-
+//     document.getElementById("bot").innerHTML=w1+w2;
 
 
-    </script>
+
+
+//     </script>
 
 
 </html> 
