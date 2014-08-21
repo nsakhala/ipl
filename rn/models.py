@@ -76,5 +76,6 @@ class UserPurse(models.Model):
 	user_data=models.ForeignKey(User)
 	
 	
+	
 
 
