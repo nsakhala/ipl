@@ -20,7 +20,7 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse,Team
+from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse,Team,active
 from datetime import datetime
 
 
@@ -172,6 +172,8 @@ def auc_screen(request):
 def detail(request, player_id):
     notifications = request.user.notifications.unread().order_by('-timestamp')
     uob=User.objects.get(username=request.user)
+    aob=active.objects.get(aid=1)
+    player_id=aob.active_player
     ob=UserPurse.objects.get(user_data=uob)
 
     player = Player.objects.get(pk=player_id)
@@ -195,6 +197,7 @@ def update_player(request):
     else:
 
 
+
         if pob.pBaseprice==pBid:
             pass
 
@@ -212,6 +215,10 @@ def update_player(request):
                 break
         pob.pAuctioned=1
         pob.save()
+
+        aob=active.objects.get(aid=1)
+        aob.active_player=pid+1
+        aob.save()
     
 
         for recipient in recipients:

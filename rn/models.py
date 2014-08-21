@@ -17,6 +17,12 @@ class UserDetails(models.Model):
     password=models.CharField(max_length=40)
     hashed=models.CharField(max_length=255)
     verified=models.IntegerField()
+
+class active(models.Model):
+	aid=models.IntegerField(primary_key=True)
+	active_player=models.IntegerField(default=1)
+
+	
     
     
 class UserProfile(models.Model):
