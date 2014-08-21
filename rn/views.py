@@ -20,8 +20,9 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse
+from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse, Team
 from datetime import datetime
+from django.contrib.auth import authenticate, login
 
 
 active_player=1
@@ -379,7 +380,7 @@ def bidder_signup(request):
         uname = request.POST["username"]
         passwd = request.POST["password"]
         b = User.objects.create_user(username=uname, email=request.session["email"], first_name=fname, last_name=lname, password=passwd)
-        return HttpResponseRedirect("select_teams.html")
+        return HttpResponseRedirect("usr_login.html")
 
 
 
@@ -392,10 +393,26 @@ def select_team(request):
         except:
             email_id = request.session["email"]
             b = User.objects.get(email = email_id)
-            Team.objects.create(name=request.POST["team"], owner = b.last_name)
-            return render(request, "auction_start.html")
+            Team.objects.create(name=request.POST["team"], owner = b.username)
+            return HttpResponseRedirect("auction_start.html")
     else:
         return render(request, "select_teams.html")
 
 def auction_start(request):
     return render(request, "auction_start.html")
+
+def usr_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect("select_teams.html")
+            else:
+                return render(request, "usr_login.html")
+        else:
+            return render(request, "usr_login.html")
+    else:
+        return render(request, "usr_login.html")
