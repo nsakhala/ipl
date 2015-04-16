@@ -4,13 +4,9 @@ from django.contrib import admin
 
 # Create your models here.
 
-class Bid(models.Model):
-	price=models.IntegerField()
-	bid_id=models.IntegerField(primary_key=True)
 
-class Timer(models.Model):
-	time=models.IntegerField()
-	t_id=models.IntegerField(primary_key=True)
+
+
 
 class UserDetails(models.Model):
     email=models.EmailField(max_length=40,primary_key=True)
@@ -74,6 +70,7 @@ class Team(models.Model):
 class UserPurse(models.Model):
 	money=models.IntegerField(default=600000000)
 	user_data=models.ForeignKey(User)
+	
 	
 	
 

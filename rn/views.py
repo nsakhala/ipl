@@ -10,7 +10,7 @@ from notifications import notify
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from rn.models import User,UserProfile,Timer,Player
+from rn.models import User,UserProfile,Player
 from rn.forms import ContactForm,LoginForm
 from django.core.mail import send_mail
 from django.views.decorators.cache import never_cache
@@ -20,8 +20,8 @@ from django.shortcuts import render_to_response
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse, Team
-from rn.models import UserDetails,Bid,Timer,activePlayer, Bidder,UserPurse,Team,active
+from rn.models import UserDetails,activePlayer, Bidder,UserPurse, Team
+from rn.models import UserDetails,activePlayer, Bidder,UserPurse,Team,active
 from datetime import datetime
 from django.contrib.auth import authenticate, login
 
@@ -399,9 +399,13 @@ def select_team(request):
             return render(request, "select_teams.html")
 
         except:
-            email_id = request.session["email"]
-            b = User.objects.get(email = email_id)
+            username=request.POST['team']
+
+            
+            b = User.objects.get(username=request.user)
             Team.objects.create(name=request.POST["team"], owner = b.username)
+            pob=UserPurse(money=600000000,user_data=b)
+            pob.save()
             return HttpResponseRedirect("auction_start.html")
     else:
         return render(request, "select_teams.html")
@@ -417,7 +421,7 @@ def usr_login(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect("select_teams.html")
+                return HttpResponseRedirect("select_teams.html?un="+username)
             else:
                 return render(request, "usr_login.html")
         else:
